@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Investment Platform Admin</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-dark bg-dark"><div class="container-fluid"><span class="navbar-brand">Investment Platform</span><form method="post" action="/admin/logout"><button class="btn btn-outline-light btn-sm">Sign out</button></form></div></nav>
+  <main class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4"><div><h1 class="h3">Dashboard</h1><p class="text-muted mb-0">Signed in as {{ admin_username }}</p></div></div>
+    <div class="row g-3 mb-4">
+      <div class="col-md-4"><div class="card shadow-sm"><div class="card-body"><div class="text-muted">Registered users</div><div class="display-6">{{ user_count }}</div></div></div></div>
+      <div class="col-md-4"><div class="card shadow-sm"><div class="card-body"><div class="text-muted">Active investment plans</div><div class="display-6">{{ plan_count }}</div></div></div></div>
+      <div class="col-md-4"><div class="card shadow-sm"><div class="card-body"><div class="text-muted">Pending withdrawals</div><div class="display-6">{{ pending_withdrawals }}</div></div></div></div>
+    </div>
+    <div class="card shadow-sm"><div class="card-body"><h2 class="h5">Operations</h2><p class="mb-0 text-muted">User management, plans, investments, deposits, withdrawals, reports, broadcasts, settings, and audit logs will be exposed through the protected admin routes as their modules are completed.</p></div></div>
+  </main>
+</body>
+</html>
