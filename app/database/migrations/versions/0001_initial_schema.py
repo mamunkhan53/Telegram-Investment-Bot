@@ -1251,8 +1251,7 @@ def upgrade() -> None:
             sa.DateTime(timezone=True),
             server_default=sa.func.now(),
             nullable=False,
-        ),
-        sa.ForeignKeyConstraint([], []),
+        ),        
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint(
             "network",
