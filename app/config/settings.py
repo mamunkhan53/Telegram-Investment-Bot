@@ -23,10 +23,7 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     secret_key: SecretStr = Field(default=SecretStr("change-me-change-me"))
 
-    telegram_bot_token: SecretStr | None = Field(
-    default=None,
-    validation_alias="TELEGRAM_BOT_TOKEN",
-    )
+    telegram_bot_token: SecretStr | None = None
     telegram_webhook_url: str | None = None
     telegram_webhook_secret: SecretStr | None = None
 
