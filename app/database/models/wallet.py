@@ -53,10 +53,10 @@ class Wallet(TimestampMixin, VersionedMixin, Base):
     deposit_address: Mapped[str | None] = mapped_column(String(128))
     status: Mapped[WalletStatus] = mapped_column(
         SQLEnum(
-        WalletStatus,
-        name="wallet_status",
-        values_callable=lambda enum_class: [member.value for member in enum_class],
-    )
+            WalletStatus,
+            name="wallet_status",
+            values_callable=lambda enum_class: [member.value for member in enum_class],
+        ),
         nullable=False,
         default=WalletStatus.ACTIVE,
         server_default=WalletStatus.ACTIVE.value,
