@@ -58,7 +58,11 @@ class ReferralReward(TimestampMixin, Base):
     reward_percent: Mapped[Decimal] = mapped_column(Numeric(12, 8), nullable=False)
     reward_amount: Mapped[Decimal] = mapped_column(Numeric(38, 18), nullable=False)
     status: Mapped[ReferralStatus] = mapped_column(
-        SQLEnum(ReferralStatus, name="referral_status"),
+        SQLEnum(
+            ReferralStatus,
+            name="referral_status",
+            values_callable=lambda enum_class: [member.value for member in enum_class],
+        ),
         nullable=False,
         default=ReferralStatus.PENDING,
         server_default=ReferralStatus.PENDING.value,
