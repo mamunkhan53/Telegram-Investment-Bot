@@ -64,7 +64,11 @@ class Deposit(TimestampMixin, Base):
         nullable=False, default=0, server_default="0"
     )
     status: Mapped[DepositStatus] = mapped_column(
-        SQLEnum(DepositStatus, name="deposit_status"),
+        SQLEnum(
+            DepositStatus,
+            name="deposit_status",
+            values_callable=lambda enum_class: [member.value for member in enum_class],
+        ),
         nullable=False,
         default=DepositStatus.DETECTED,
         server_default=DepositStatus.DETECTED.value,
@@ -112,7 +116,11 @@ class Withdrawal(TimestampMixin, VersionedMixin, Base):
         Numeric(38, 18), nullable=False, default=Decimal(0), server_default="0"
     )
     status: Mapped[WithdrawalStatus] = mapped_column(
-        SQLEnum(WithdrawalStatus, name="withdrawal_status"),
+        SQLEnum(
+            WithdrawalStatus,
+            name="withdrawal_status",
+            values_callable=lambda enum_class: [member.value for member in enum_class],
+        ),
         nullable=False,
         default=WithdrawalStatus.REQUESTED,
         server_default=WithdrawalStatus.REQUESTED.value,
