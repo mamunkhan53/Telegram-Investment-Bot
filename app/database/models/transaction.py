@@ -48,18 +48,18 @@ class Transaction(TimestampMixin, Base):
     )
     transaction_type: Mapped[TransactionType] = mapped_column(
         SQLEnum(
-        TransactionType,
-        name="transaction_type",
-        values_callable=lambda enum_class: [member.value for member in enum_class],
-    ) 
+            TransactionType,
+            name="transaction_type",
+            values_callable=lambda enum_class: [member.value for member in enum_class],
+        ), 
         nullable=False
     )
     status: Mapped[TransactionStatus] = mapped_column(
         SQLEnum(
-        TransactionStatus,
-        name="transaction_status",
-        values_callable=lambda enum_class: [member.value for member in enum_class],
-    )
+            TransactionStatus,
+            name="transaction_status",
+            values_callable=lambda enum_class: [member.value for member in enum_class],
+        ),
         nullable=False,
         default=TransactionStatus.POSTED,
         server_default=TransactionStatus.POSTED.value,
