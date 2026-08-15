@@ -61,7 +61,11 @@ class InvestmentPlan(TimestampMixin, Base):
         nullable=False, default=False, server_default="false"
     )
     status: Mapped[PlanStatus] = mapped_column(
-        SQLEnum(PlanStatus, name="plan_status"),
+        SQLEnum(
+        PlanStatus,
+        name="plan_status",
+        values_callable=lambda enum_class: [member.value for member in enum_class],
+    ),
         nullable=False,
         default=PlanStatus.DRAFT,
         server_default=PlanStatus.DRAFT.value,
@@ -104,7 +108,11 @@ class Investment(TimestampMixin, VersionedMixin, Base):
         Numeric(38, 18), nullable=False, default=Decimal(0), server_default="0"
     )
     status: Mapped[InvestmentStatus] = mapped_column(
-        SQLEnum(InvestmentStatus, name="investment_status"),
+        SQLEnum(
+        InvestmentStatus,
+        name="investment_status",
+        values_callable=lambda enum_class: [member.value for member in enum_class],
+    ),
         nullable=False,
         default=InvestmentStatus.PENDING,
         server_default=InvestmentStatus.PENDING.value,
