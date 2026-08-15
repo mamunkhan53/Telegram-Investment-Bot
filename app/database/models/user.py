@@ -39,7 +39,11 @@ class User(TimestampMixin, Base):
         String(10), nullable=False, default="en", server_default="en"
     )
     status: Mapped[UserStatus] = mapped_column(
-        SQLEnum(UserStatus, name="user_status"),
+        SQLEnum(
+            UserStatus,
+            name="user_status",
+            values_callable=lambda enum_class: [member.value for member in enum_class],
+        ),
         nullable=False,
         default=UserStatus.ACTIVE,
         server_default=UserStatus.ACTIVE.value,
