@@ -15,7 +15,12 @@ from app.utils.logger import configure_logging, get_logger
 async def run() -> None:
     settings = get_settings()
     print("DEBUG TELEGRAM_BOT_TOKEN PRESENT:", bool(settings.telegram_bot_token))
-    print("DEBUG TELEGRAM_BOT_TOKEN LENGTH:", len(settings.telegram_bot_token.get_secret_value()) if settings.telegram_bot_token else 0)
+    print(
+        "DEBUG TELEGRAM_BOT_TOKEN LENGTH:",
+        len(settings.telegram_bot_token.get_secret_value())
+        if settings.telegram_bot_token
+        else 0
+    )
     configure_logging(settings)
     logger = get_logger(__name__)
     process = os.getenv("APP_PROCESS", "all").lower()
