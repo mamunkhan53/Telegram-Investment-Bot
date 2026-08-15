@@ -1,4 +1,3 @@
-```python
 """Initial investment platform schema.
 
 Revision ID: 0001_initial_schema
@@ -1402,4 +1401,3 @@ def downgrade() -> None:
                 """
             )
         )
-```
