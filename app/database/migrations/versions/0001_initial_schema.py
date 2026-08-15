@@ -1,3 +1,4 @@
+```python
 """Initial investment platform schema.
 
 Revision ID: 0001_initial_schema
@@ -8,6 +9,7 @@ Create Date: 2026-08-12
 from __future__ import annotations
 
 import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
 from alembic import op
 
 revision = "0001_initial_schema"
@@ -20,12 +22,12 @@ def upgrade() -> None:
     # ------------------------------------------------------------------
     # PostgreSQL ENUM definitions
     #
-    # create_type=False is important here because we create the ENUM
-    # types explicitly below. This prevents SQLAlchemy from attempting
-    # to create them again during op.create_table().
+    # ENUM types are created explicitly below using PostgreSQL catalog
+    # checks. create_type=False prevents SQLAlchemy from attempting to
+    # create them again when the tables are created.
     # ------------------------------------------------------------------
 
-    user_status = sa.Enum(
+    user_status = postgresql.ENUM(
         "active",
         "suspended",
         "banned",
@@ -33,7 +35,7 @@ def upgrade() -> None:
         create_type=False,
     )
 
-    wallet_status = sa.Enum(
+    wallet_status = postgresql.ENUM(
         "active",
         "frozen",
         "closed",
@@ -41,7 +43,7 @@ def upgrade() -> None:
         create_type=False,
     )
 
-    plan_status = sa.Enum(
+    plan_status = postgresql.ENUM(
         "draft",
         "active",
         "paused",
@@ -50,7 +52,7 @@ def upgrade() -> None:
         create_type=False,
     )
 
-    investment_status = sa.Enum(
+    investment_status = postgresql.ENUM(
         "pending",
         "active",
         "completed",
@@ -59,7 +61,7 @@ def upgrade() -> None:
         create_type=False,
     )
 
-    deposit_status = sa.Enum(
+    deposit_status = postgresql.ENUM(
         "detected",
         "confirmed",
         "credited",
@@ -68,7 +70,7 @@ def upgrade() -> None:
         create_type=False,
     )
 
-    withdrawal_status = sa.Enum(
+    withdrawal_status = postgresql.ENUM(
         "requested",
         "approved",
         "processing",
@@ -79,7 +81,7 @@ def upgrade() -> None:
         create_type=False,
     )
 
-    transaction_type = sa.Enum(
+    transaction_type = postgresql.ENUM(
         "deposit",
         "withdrawal",
         "investment",
@@ -92,7 +94,7 @@ def upgrade() -> None:
         create_type=False,
     )
 
-    transaction_status = sa.Enum(
+    transaction_status = postgresql.ENUM(
         "pending",
         "posted",
         "voided",
@@ -100,7 +102,7 @@ def upgrade() -> None:
         create_type=False,
     )
 
-    referral_status = sa.Enum(
+    referral_status = postgresql.ENUM(
         "pending",
         "paid",
         "reversed",
@@ -115,13 +117,14 @@ def upgrade() -> None:
     # at the same time.
     # ------------------------------------------------------------------
 
-    bind.execute(sa.text("SELECT pg_advisory_xact_lock(918273645)"))
+    bind.execute(
+        sa.text(
+            "SELECT pg_advisory_xact_lock(918273645)"
+        )
+    )
 
     # ------------------------------------------------------------------
     # Create ENUM types safely.
-    #
-    # PostgreSQL does not support CREATE TYPE ... IF NOT EXISTS directly
-    # on all supported versions, so use a DO block with a catalog check.
     # ------------------------------------------------------------------
 
     enum_definitions = [
@@ -214,11 +217,31 @@ def upgrade() -> None:
     op.create_table(
         "users",
         sa.Column("id", sa.Uuid(), nullable=False),
-        sa.Column("telegram_user_id", sa.BigInteger(), nullable=False),
-        sa.Column("username", sa.String(length=255), nullable=True),
-        sa.Column("referral_code", sa.String(length=32), nullable=False),
-        sa.Column("first_name", sa.String(length=255), nullable=True),
-        sa.Column("last_name", sa.String(length=255), nullable=True),
+        sa.Column(
+            "telegram_user_id",
+            sa.BigInteger(),
+            nullable=False,
+        ),
+        sa.Column(
+            "username",
+            sa.String(length=255),
+            nullable=True,
+        ),
+        sa.Column(
+            "referral_code",
+            sa.String(length=32),
+            nullable=False,
+        ),
+        sa.Column(
+            "first_name",
+            sa.String(length=255),
+            nullable=True,
+        ),
+        sa.Column(
+            "last_name",
+            sa.String(length=255),
+            nullable=True,
+        ),
         sa.Column(
             "language_code",
             sa.String(length=10),
@@ -237,7 +260,11 @@ def upgrade() -> None:
             server_default=sa.text("false"),
             nullable=False,
         ),
-        sa.Column("referred_by_id", sa.Uuid(), nullable=True),
+        sa.Column(
+            "referred_by_id",
+            sa.Uuid(),
+            nullable=True,
+        ),
         sa.Column(
             "last_login_at",
             sa.DateTime(timezone=True),
@@ -292,9 +319,21 @@ def upgrade() -> None:
     op.create_table(
         "investment_plans",
         sa.Column("id", sa.Uuid(), nullable=False),
-        sa.Column("name", sa.String(length=120), nullable=False),
-        sa.Column("slug", sa.String(length=140), nullable=False),
-        sa.Column("description", sa.Text(), nullable=True),
+        sa.Column(
+            "name",
+            sa.String(length=120),
+            nullable=False,
+        ),
+        sa.Column(
+            "slug",
+            sa.String(length=140),
+            nullable=False,
+        ),
+        sa.Column(
+            "description",
+            sa.Text(),
+            nullable=True,
+        ),
         sa.Column(
             "asset",
             sa.String(length=16),
@@ -390,7 +429,11 @@ def upgrade() -> None:
     op.create_table(
         "wallets",
         sa.Column("id", sa.Uuid(), nullable=False),
-        sa.Column("user_id", sa.Uuid(), nullable=False),
+        sa.Column(
+            "user_id",
+            sa.Uuid(),
+            nullable=False,
+        ),
         sa.Column(
             "asset",
             sa.String(length=16),
@@ -478,8 +521,16 @@ def upgrade() -> None:
     op.create_table(
         "investments",
         sa.Column("id", sa.Uuid(), nullable=False),
-        sa.Column("user_id", sa.Uuid(), nullable=False),
-        sa.Column("plan_id", sa.Uuid(), nullable=False),
+        sa.Column(
+            "user_id",
+            sa.Uuid(),
+            nullable=False,
+        ),
+        sa.Column(
+            "plan_id",
+            sa.Uuid(),
+            nullable=False,
+        ),
         sa.Column(
             "principal_amount",
             sa.Numeric(38, 18),
@@ -591,8 +642,16 @@ def upgrade() -> None:
     op.create_table(
         "deposits",
         sa.Column("id", sa.Uuid(), nullable=False),
-        sa.Column("user_id", sa.Uuid(), nullable=False),
-        sa.Column("wallet_id", sa.Uuid(), nullable=False),
+        sa.Column(
+            "user_id",
+            sa.Uuid(),
+            nullable=False,
+        ),
+        sa.Column(
+            "wallet_id",
+            sa.Uuid(),
+            nullable=False,
+        ),
         sa.Column(
             "network",
             sa.String(length=32),
@@ -724,8 +783,16 @@ def upgrade() -> None:
     op.create_table(
         "withdrawals",
         sa.Column("id", sa.Uuid(), nullable=False),
-        sa.Column("user_id", sa.Uuid(), nullable=False),
-        sa.Column("wallet_id", sa.Uuid(), nullable=False),
+        sa.Column(
+            "user_id",
+            sa.Uuid(),
+            nullable=False,
+        ),
+        sa.Column(
+            "wallet_id",
+            sa.Uuid(),
+            nullable=False,
+        ),
         sa.Column(
             "network",
             sa.String(length=32),
@@ -855,8 +922,16 @@ def upgrade() -> None:
     op.create_table(
         "transactions",
         sa.Column("id", sa.Uuid(), nullable=False),
-        sa.Column("user_id", sa.Uuid(), nullable=False),
-        sa.Column("wallet_id", sa.Uuid(), nullable=False),
+        sa.Column(
+            "user_id",
+            sa.Uuid(),
+            nullable=False,
+        ),
+        sa.Column(
+            "wallet_id",
+            sa.Uuid(),
+            nullable=False,
+        ),
         sa.Column(
             "transaction_type",
             transaction_type,
@@ -967,8 +1042,16 @@ def upgrade() -> None:
     op.create_table(
         "referral_rewards",
         sa.Column("id", sa.Uuid(), nullable=False),
-        sa.Column("referrer_id", sa.Uuid(), nullable=False),
-        sa.Column("referred_user_id", sa.Uuid(), nullable=False),
+        sa.Column(
+            "referrer_id",
+            sa.Uuid(),
+            nullable=False,
+        ),
+        sa.Column(
+            "referred_user_id",
+            sa.Uuid(),
+            nullable=False,
+        ),
         sa.Column(
             "source_investment_id",
             sa.Uuid(),
@@ -1282,7 +1365,11 @@ def downgrade() -> None:
 
     bind = op.get_bind()
 
-    bind.execute(sa.text("SELECT pg_advisory_xact_lock(918273645)"))
+    bind.execute(
+        sa.text(
+            "SELECT pg_advisory_xact_lock(918273645)"
+        )
+    )
 
     for type_name in (
         "referral_status",
@@ -1315,3 +1402,4 @@ def downgrade() -> None:
                 """
             )
         )
+```
